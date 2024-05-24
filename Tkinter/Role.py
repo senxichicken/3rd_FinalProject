@@ -6,9 +6,6 @@ from collections import defaultdict
 import gameMain
 from character import player_data
 
-with open('D:/Homework/specialsubject/project/secretkey.txt','r') as file:
-    apikey = file.read().rstrip()
-
 openai.api_key = apikey
 
 #player_data = {}
