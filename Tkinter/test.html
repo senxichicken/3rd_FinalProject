@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>劇情回顧</title>
+<style>
+body {
+  background-color: #333; /* 背景顏色 */
+  color: white; /* 文字顏色 */
+}
+.red {
+  color: red;
+}
+#buttonContainer {
+  display: flex;
+  flex-direction: column; 
+}
+#filesContainer {
+  text-align: center; 
+}
+#buttonContainer button {
+  width: auto; 
+}
+.fileButton {
+  width: 80px; 
+  text-align: left; 
+  font-size: 24px; 
+  margin-bottom: 2px; 
+}
+</style>
+</head>
+<body>
+<div id="filesContainer">
+  <input type="file" id="files" name="files" multiple />
+</div>
+<div id="output">
+</div>
+<div id="buttonContainer"></div> 
+
+
+<script>
+    var displayedText = ""; 
+
+    function openFile(event){
+        var files = event.target.files;
+        if (!files || files.length === 0) {
+            return; // 檔案不存在或未選擇，返回
+        }
+
+        for (var i = 0; i < files.length; i++) {
+            (function(file) { 
+                var reader = new FileReader();
+                reader.onload = function(){
+                    var text = reader.result;
+                    var fileName = file.name.replace(/\.[^/.]+$/, ''); 
+                    createButton(fileName, text); 
+                };
+                reader.readAsText(file);
+            })(files[i]);
+        }
+    }
+
+    function createButton(fileName, text) {
+        var button = document.createElement("button");
+        button.textContent = fileName; // 按鈕文字==檔案名稱
+        button.className = "fileButton"; 
+        button.dataset.originalText = fileName; 
+
+        button.addEventListener("click", function() {
+            if (button.textContent === "返回") {
+                displayedText = ""; 
+                displayText(displayedText); 
+                button.textContent = button.dataset.originalText; // 按鈕文字還原為檔案名稱
+            } else {
+                displayedText = text; 
+                displayText(displayedText); 
+                button.textContent = "返回"; // 修改文字 "返回"
+            }
+        });
+
+        var buttonContainer = document.getElementById('buttonContainer');
+        buttonContainer.appendChild(button); 
+    }
+
+    function displayText(text) {
+        var lines = text.split('\n');
+        var fragment = document.createDocumentFragment(); // 
+        var outputDiv = document.getElementById('output');
+        outputDiv.innerHTML = ''; 
+
+        lines.forEach(function(line) {
+            var element = document.createElement('p');
+            element.textContent = line.trim(); // 
+            if (line.includes("你:")) {
+                element.classList.add('red'); // 包含 "你:"，則紅色
+            }
+            fragment.appendChild(element);
+        });
+
+        outputDiv.appendChild(fragment); // 
+    }
+
+    document.getElementById("files").addEventListener("change", openFile, false);
+</script>
+</body>
+</html>
